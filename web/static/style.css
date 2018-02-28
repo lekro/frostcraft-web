@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css?family=Inconsolata|Lato');
+
+body {
+	/*background-color: #cce0ff;*/
+	background-color: #eef8ff;
+	color: #222266;
+	font-family: 'Lato', sans-serif;
+	font-size: 14pt;
+	margin: 32px 5% 32px;
+}
+
+@media screen and (min-width: 1600px) {
+	body {
+		margin: 32px 10% 32px;
+	}
+}
+
+div.top {
+	font-size: 150%;
+	padding: 12px 32px 24px;
+}
+
+span.top {
+	display: inline-flex;
+	align-items: center;
+}
+
+span.toptext {
+	align-items: bottom;
+}
+
+span.toptitle {
+	font-size: 150%;
+	margin-left: 24px;
+	padding-right: 16px;
+}
+
+div.box {
+	border-radius: 16px;
+	padding: 12px 32px 24px;
+	box-shadow: 0px 0px 10px rgba(0,0,255,0.3);
+	background-color: rgba(0,0,255,0.02);
+}
+	
+iframe {
+	box-shadow: 0px 0px 24px rgba(0,0,255,0.3);
+}
+
+div.index {
+	margin: 12px 0px;
+	/*font-size: 120%;*/
+	line-height: 200%;
+}
+
+h1, h2, h3, h4 {
+	font-weight: normal;
+}
+
+h3 {
+	font-size: 18pt;
+}
+
+h4 {
+	font-size: 16pt;
+}
+
+h2, h3 {
+	margin-bottom: 12px;
+}
+
+a {
+	color: #6666cc;
+	text-decoration: none;
+}
+
+code, pre, kbd {
+	font-family: 'Inconsolata', monospace;
+	/*background-color: #cce0ff;*/
+	box-shadow: 0px 0px 1px #aaaaff;
+	padding: 1px 3px 1px;
+	border-radius: 3px;
+}
+
+kbd {
+	background-color: #f5f5ff;
+	padding: 4px 6px;
+	box-shadow 0px 0px 3px #aaaaaa;
+	font-weight: bold;
+}
+
+ul, ol {
+	padding-left: 1.8em;
+}
+
+li {
+	margin-bottom: 4px;
+	padding-left: 4px;
+}
+
+a.toplink {
+	margin-left: 16px;
+	margin-right: 16px;
+}
+
+a:hover, a:active {
+	text-shadow: 0px 0px 6px #8888ff;
+}
+
+div.members {
+	font-size: 24px;
+	/* line-height: 200%; */
+	margin: 16px 8px;
+}
+
+span.member {
+	display: inline-flex;
+	vertical-align: middle;
+	margin-bottom: 8px;
+}
+
+#members span {
+	margin-left: 4px;
+}
+
+#members img {
+	box-shadow: 0px 0px 8px rgba(0,0,255,0.4);
+}
+
+#members a {
+	border-bottom: 1px solid #8888ff;
+}
+
+#members a.nounder {
+	border-bottom: 0px;
+}
+
+span.owner { color: #71368a; }
+span.op { color: #04a3b9; }
+span.builder { color: #3498db; }
+span.tech { color: #e74c3c; }
+span.help { color: #2ecc71; }
+span.veteran { color: #1f8b4c; }
+
+table {
+	box-shadow: 0px 0px 8px rgba(0,0,255,0.2);
+	border-collapse: collapse;
+	font-size: 24px;
+	margin-top: 24px;
+}
+
+th {
+	font-weight: bold;
+}
+
+th, td {
+	box-shadow: 0px 0px 1px rgba(0,0,255,0.3);
+	border: 1px solid #aaaaee;
+	padding: 8px;
+	margin: 0px;
+	vertical-align: middle;
+}

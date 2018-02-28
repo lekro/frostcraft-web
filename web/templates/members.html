@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+{% if roles %}
+<style>
+{% for name, role in roles.items() %}
+span.role_{{ name }} { 
+    color: {{ role['color'] }}; 
+}
+{% endfor %}
+</style>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+<h1>Members</h1>
+
+{% if members %}
+
+<p>
+Here you can find a list of players and their social media.
+This list may not be the most up to date! If you want to
+confirm something, check Discord. If you are a member and
+would like your information updated or
+social media/website/other links added or changed, contact
+<a href="http://kapu.moe/">@lekro</a> in FrostCraft Discord.
+</p>
+
+<div id="members">
+    <table>
+        <tr><th></th>
+            <th>Name</th>
+            <th>Roles</th>
+            <th>Social Media</th>
+        </tr>
+
+
+        {% for member in members %}
+
+        <tr>
+
+            <td><img src="https://crafatar.com/avatars/{{ member.uuid }}?size=32"></td>
+            <td>
+                {% if member.url is defined %}
+                <a href="{{ member.url }}">{{ member.name }}</a>
+                {% else %}
+                {{ member.name }}
+                {% endif %}
+            <td>
+                {% for role in member.roles %}
+                <span class="{{ role.class }}">{{ role.name }}</span>
+                {% endfor %}
+            </td>
+            <td>{{ member.media }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+</div>
+
+{% else %}
+
+<p>The members list doesn't exist!</p>
+
+{% endif %}
+
+{% endblock %}

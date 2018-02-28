@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <link rel=stylesheet href="{{ url_for('static', filename='style.css') }}">
+        <title>FrostCraft - {{ title }}</title>
+        {% block head %} {% endblock %}
+    </head>
+
+    <body>
+
+        <div class=top>
+            <span class=top>
+                <img src="{{ url_for('static', filename='logo.png') }}", width=80 height=80></img>
+                <span class=toptext>
+                    <span class=toptitle>FrostCraft</span>
+                    <a class=toplink href="/">Home</a>
+                    <a class=toplink href="{{ url_for('members') }}">Members</a>
+                    <a class=toplink href="{{ url_for('docs') }}">Reference</a>
+                </span>
+            </span>
+        </div>
+
+        <div class=box>
+            {% block content %} {% endblock %}
+        </div>
+
+        </div>
+    </body>
+</html>

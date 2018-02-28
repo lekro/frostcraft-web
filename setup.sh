@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo "Looking for python3..."
 if ! which python3; then
     echo "Install Python 3."
     return 1
