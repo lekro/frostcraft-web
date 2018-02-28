@@ -49,12 +49,28 @@ social media/website/other links added or changed, contact
                 {% else %}
                 {{ member.name }}
                 {% endif %}
-            <td>
-                {% for role in member.roles %}
-                <span class="{{ role.class }}">{{ role.name }}</span>
-                {% endfor %}
-            </td>
-            <td>{{ member.media }}</td>
+                <td>
+                    {% for role in member.roles %}
+                    <span class="{{ role.class }}">{{ role.name }}</span>
+                    {% if loop.index % 2 == 0 %}<br>{% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for medium in member.media %}
+                    {% if medium.handle is defined %}
+                    {{ medium.platform }}: 
+                    {% if medium.url is defined %}
+                    <a class="nounder" href="{{ medium.url }}"><code>{{ medium.handle }}</code></a>
+                    {% else %}
+                    <code>{{ medium.handle }}</code>
+                    {% endif %}
+
+                    {% else %}
+                    <a href="{{ medium.url }}">{{ medium.platform }}</a>
+                    {% endif %}
+                    <br>
+                    {% endfor %}
+                </td>
 
         </tr>
 
