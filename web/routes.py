@@ -54,7 +54,7 @@ def docs(article):
 
     try:
         with open(article_path) as f:
-            content = markdown(f.read())
+            content = markdown(f.read(), fenced_code=True)
         return render_template('content.html', title=article, content=content)
     except OSError:
         abort(404)
@@ -72,3 +72,12 @@ def not_found(error):
         # If we don't find one use this default ugly one
         return render_template('content.html', title='404', 
                                content='<h1>404 Not Found</h1>'), 404
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(jp(app.root_path, 'static'),
+                               'favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
+
+
