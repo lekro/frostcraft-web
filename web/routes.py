@@ -3,12 +3,14 @@ from flask import render_template, render_template_string, abort, Markup,\
 send_from_directory, flash, redirect
 from flask_misaka import markdown
 from web import app
-from web.forms import ApplicationForm
+from web.forms import make_form
 from ruamel.yaml import YAML
 
 yaml = YAML()
 with open('config.yml') as f:
     config = yaml.load(f)
+with open('applications.yml') as f:
+    applyconfig = yaml.load(f)
 
 
 @app.route('/')
@@ -62,15 +64,35 @@ def docs(article):
         abort(404)
 
 
-@app.route('/apply', methods=['GET', 'POST'])
-def apply():
-    form = ApplicationForm()
+@app.route('/apply/<name>', methods=['GET', 'POST'])
+def apply(name):
 
-    if form.validate_on_submit():
-        flash('Application submitted! Good luck!')
-        return redirect('/')
+    if not applyconfig['enable']:
+        return render_template('content.html', title='Apply',
+                               content='<h1>Apply</h1>'
+                                       '<p>Applications are '
+                                       'currently closed.</p>')
+    elif name in applyconfig['applications']:
 
-    return render_template('apply.html', form=form)
+        application = applyconfig['applications'][name]
+        if not application['enable']:
+            return render_template('content.html', 
+                                   title=application['name']+' Application',
+                                   content='<h1>Apply</h1>'
+                                           '<p>This application is '
+                                           'currently closed.</p>')
+
+        form = make_form(application)
+
+        if form.validate_on_submit():
+            flash('Application submitted! Good luck!')
+            return redirect('/')
+
+        return render_template('apply.html', form=form,
+                               form_name=application['name'],
+                               form_description=application['description'])
+    else:
+        abort(404)
 
 
 @app.errorhandler(404)

@@ -3,13 +3,41 @@
 {% block title %}Apply{% endblock %}
 
 {% block content %}
-<h1>Apply</h1>
+<h1>Apply for {{ form_name }}</h1>
+
+<p>
+{{ form_description }}
+</p>
+
+<div class="formsmall">
+<p>Fields marked with * are required.
+Note that we use cookies to keep this form secure.
+By accessing or using this form you agree to our
+use of cookies.
+</p>
+
+</div>
+
 <form action="" method="post">
     {{ form.hidden_tag() }}
+    {% for field in form %}
+    {% if field.flags.dynamic %}
     <p>
-    {{ form.username.label }}<br>
-    {{ form.username(size=32) }}
+    <h3>{{ field.label }}
+        {% if field.flags.required %}*{% endif %}</h3>
+    {% if field.description %}
+    {{ field.description }}<br>
+    {% endif %}
+    {% for error in field.errors %}
+    <span class="formerror">{{ error }}</span><br>
+    {% endfor %}
+    {{ field(size=32) }}
     </p>
+    {% endif %}
+    {% endfor %}
+    <div class="checkbox">
+    <p>{{ form.agree() }} {{ form.agree.label }}</p>
+    </div>
     <p>{{ form.submit() }}</p>
 </form>
 {% endblock %}
