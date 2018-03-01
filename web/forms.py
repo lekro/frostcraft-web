@@ -10,7 +10,9 @@ def make_form(config):
 
     dynamic_fields = []
 
-    F.agree = BooleanField('I agree')
+    F.agree = BooleanField('I am 13 years of age or older',
+                           validators=[DataRequired(message='You must '
+                               'be 13 years of age or older to apply.')])
     F.submit = SubmitField('Apply!')
     for field in config['fields']:
 

@@ -35,9 +35,12 @@ use of cookies.
     </p>
     {% endif %}
     {% endfor %}
-    <div class="checkbox">
-    <p>{{ form.agree() }} {{ form.agree.label }}</p>
-    </div>
+    <p>
+    {{ form.agree() }} {{ form.agree.label }}<br>
+    {% for error in form.agree.errors %}
+    <span class="formerror">{{ error }}</span><br>
+    {% endfor %}
+    </p>
     <p>{{ form.submit() }}</p>
 </form>
 {% endblock %}
