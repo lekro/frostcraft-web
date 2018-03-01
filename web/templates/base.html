@@ -22,6 +22,16 @@
             </span>
         </div>
 
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <center>
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </center>
+        {% endif %}
+        {% endwith %}
+
         <div class="box">
             {% block content %} {% endblock %}
         </div>

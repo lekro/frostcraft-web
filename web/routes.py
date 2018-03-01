@@ -1,7 +1,9 @@
 from os.path import join as jp
-from flask import render_template, render_template_string, abort, Markup
+from flask import render_template, render_template_string, abort, Markup,\
+send_from_directory, flash, redirect
 from flask_misaka import markdown
 from web import app
+from web.forms import ApplicationForm
 from ruamel.yaml import YAML
 
 yaml = YAML()
@@ -58,6 +60,17 @@ def docs(article):
         return render_template('content.html', title=article, content=content)
     except OSError:
         abort(404)
+
+
+@app.route('/apply', methods=['GET', 'POST'])
+def apply():
+    form = ApplicationForm()
+
+    if form.validate_on_submit():
+        flash('Application submitted! Good luck!')
+        return redirect('/')
+
+    return render_template('apply.html', form=form)
 
 
 @app.errorhandler(404)
