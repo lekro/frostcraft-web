@@ -18,6 +18,9 @@
                     <a class=toplink href="/">Home</a>
                     <a class=toplink href="{{ url_for('members') }}">Members</a>
                     <a class=toplink href="{{ url_for('docs') }}">Reference</a>
+                    {% if g.applications_enabled %}
+                    <a class=toplink href="{{ url_for('applylist') }}">Apply</a>
+                    {% endif %}
                 </span>
             </span>
         </div>

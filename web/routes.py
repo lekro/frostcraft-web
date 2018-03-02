@@ -1,6 +1,6 @@
 from os.path import join as jp
 from flask import render_template, render_template_string, abort, Markup,\
-send_from_directory, flash, redirect
+send_from_directory, flash, redirect, g
 from flask_misaka import markdown
 from web import app
 from web.forms import make_form
@@ -11,6 +11,22 @@ with open('config.yml') as f:
     config = yaml.load(f)
 with open('applications.yml') as f:
     applyconfig = yaml.load(f)
+
+# Enable application in the top level menu?
+applications_enabled = None
+if applyconfig['enable']:
+    for a in applyconfig['applications']:
+        if applyconfig['applications'][a]['enable']:
+            applications_enabled = True
+            break
+if applications_enabled is None:
+    applications_enabled = False
+
+
+@app.before_request
+def check_applications_enabled():
+    g.applications_enabled = applications_enabled
+    # setattr(g, 'applications_enabled', applications_enabled)
 
 
 @app.route('/')
@@ -65,6 +81,7 @@ def docs(article):
 
 
 @app.route('/apply')
+@app.route('/apply/')
 def applylist():
 
     if not applyconfig['enable']:
