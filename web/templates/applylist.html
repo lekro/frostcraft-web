@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Apply?{% endblock %}
+
+{% block content %}
+<h1>List of applications</h1>
+
+<p>
+You're in luck!
+We're currently accepting new people to FrostCraft!
+</p>
+
+{% for app in apps %}
+{% if apps[app].enable %}
+<div class="appitem">
+<h3>{{ apps[app].name }}</h3>
+<p>{{ apps[app].description }}</p>
+<p><a class="button" href="apply/{{ app }}">Apply!</a></p>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %}
+

@@ -64,6 +64,19 @@ def docs(article):
         abort(404)
 
 
+@app.route('/apply')
+def applylist():
+
+    if not applyconfig['enable']:
+        return render_template('content.html', title='Apply',
+                               content='<h1>Apply</h1>'
+                                       '<p>Applications are '
+                                       'currently closed.</p>')
+    
+    else:
+        return render_template('applylist.html', apps=applyconfig['applications'])
+
+
 @app.route('/apply/<name>', methods=['GET', 'POST'])
 def apply(name):
 

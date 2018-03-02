@@ -21,6 +21,7 @@ use of cookies.
 <form action="" method="post">
     {{ form.hidden_tag() }}
     {% for field in form %}
+
     {% if field.flags.dynamic %}
     <p>
     <h3>{{ field.label }}
@@ -34,8 +35,19 @@ use of cookies.
     {{ field(size=32) }}
     </p>
     {% endif %}
+
+    {% if field.flags.mask %}
+    {{ field() }} {{ field.label }}<br>
+    {% endif %}
+
     {% endfor %}
     <p>
+    {{ form.recaptcha() }}
+    {% for error in form.recaptcha.errors %}
+    <span class="formerror">{{ error }}
+    (maybe you didn't click the captcha?)</span><br>
+    {% endfor %}
+    <br>
     {{ form.agree() }} {{ form.agree.label }}<br>
     {% for error in form.agree.errors %}
     <span class="formerror">{{ error }}</span><br>
