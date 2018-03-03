@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Application Voting{% endblock %}
+
+{% block content %}
+<h1>Vote for {{ metadata.type }} application</h1>
+
+{% for field in submission %}
+<h2>{{ field.name }}</h2>
+<p>
+{{ field.description }}
+{% if field.mask %}
+[this field has been hidden from non-operators]
+{% endif %}
+</p>
+{% if not field.mask or admin %}
+<pre>
+{{ field.value }}
+</pre>
+{% endif %}
+{% endfor %}
+{% endblock %}
