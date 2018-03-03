@@ -1,32 +1,40 @@
 from os.path import join as jp
 from flask import render_template, render_template_string, abort, Markup,\
-send_from_directory, flash, redirect, g
+send_from_directory, flash, redirect, g, request
 from flask_misaka import markdown
 from web import app
 from web.forms import make_form
 from ruamel.yaml import YAML
+from threading import Lock
+import secrets
 
-yaml = YAML()
-with open('config.yml') as f:
-    config = yaml.load(f)
-with open('applications.yml') as f:
-    applyconfig = yaml.load(f)
+# Lock on all application related stuff.
+# Because this is so low-volume, we can just keep one
+# and write to ONE file
+apply_lock = Lock()
 
-# Enable application in the top level menu?
-applications_enabled = None
-if applyconfig['enable']:
-    for a in applyconfig['applications']:
-        if applyconfig['applications'][a]['enable']:
-            applications_enabled = True
-            break
-if applications_enabled is None:
-    applications_enabled = False
+with apply_lock:
+    # Load configs with the module
+    yaml = YAML()
+    with open('config.yml') as f:
+        config = yaml.load(f)
+    with open('applications.yml') as f:
+        applyconfig = yaml.load(f)
+
+    # Enable application in the top level menu?
+    applications_enabled = None
+    if applyconfig['enable']:
+        for a in applyconfig['applications']:
+            if applyconfig['applications'][a]['enable']:
+                applications_enabled = True
+                break
+    if applications_enabled is None:
+        applications_enabled = False
 
 
 @app.before_request
 def check_applications_enabled():
     g.applications_enabled = applications_enabled
-    # setattr(g, 'applications_enabled', applications_enabled)
 
 
 @app.route('/')
@@ -97,11 +105,14 @@ def applylist():
 @app.route('/apply/<name>', methods=['GET', 'POST'])
 def apply(name):
 
+    # If applications aren't currently enabled, say so
     if not applyconfig['enable']:
         return render_template('content.html', title='Apply',
                                content='<h1>Apply</h1>'
                                        '<p>Applications are '
                                        'currently closed.</p>')
+
+    # Otherwise, check if this application name is listed
     elif name in applyconfig['applications']:
 
         application = applyconfig['applications'][name]
@@ -115,7 +126,61 @@ def apply(name):
         form = make_form(application)
 
         if form.validate_on_submit():
-            flash('Application submitted! Good luck!')
+
+            with apply_lock:
+
+                try:
+                    with open(jp(applyconfig['destination'], 'meta.yml')) as f:
+                        submissions = yaml.load(f)
+                except FileNotFoundError:
+                    submissions = {}
+                application_valid = True
+
+                for submission in submissions:
+                    s = submissions[submission]
+                    if s['origin'] == request.remote_addr \
+                            and s['active']:
+                        application_valid = False
+                        break
+
+                if application_valid:
+                    
+                    appid = secrets.token_hex(32)
+                    token = secrets.token_hex(32)
+                    submission_fields = []
+                    submission = {}
+
+                    for field in form:
+                        if field.flags.dynamic:
+                            fieldval = {
+                                    'name': field.name,
+                                    'description': field.description,
+                                    'value': field.data,
+                                    'mask': False
+                            }
+                            submission_fields.append(fieldval)
+                        if field.flags.mask and field.data:
+                            submission_fields[-1]['mask'] = True
+
+                    submission = {
+                            'type': name,
+                            'active': True,
+                            'origin': request.remote_addr,
+                            'token': token
+                    }
+
+                    submissions.update({appid: submission})
+                    print(submissions)
+
+                    with open(jp(applyconfig['destination'], appid+'.yml'), 'w') as f:
+                        yaml.dump(submission_fields, f)
+                    with open(jp(applyconfig['destination'], 'meta.yml'), 'w') as f:
+                        yaml.dump(submissions, f)
+
+                    flash('Application submitted! Good luck!')
+                else:
+                    flash('Your IP address already has an application on file!')
+
             return redirect('/')
 
         return render_template('apply.html', form=form,

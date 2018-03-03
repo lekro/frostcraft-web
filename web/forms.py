@@ -11,7 +11,8 @@ def make_form(config):
 
     dynamic_fields = []
 
-    F.recaptcha = RecaptchaField()
+    # F.recaptcha = RecaptchaField()
+    F.recaptcha = BooleanField('captcha placeholder')
     F.agree = BooleanField('I am 13 years of age or older',
                            validators=[DataRequired(message='You must '
                                'be 13 years of age or older to apply.')])
