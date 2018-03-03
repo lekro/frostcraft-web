@@ -1,9 +1,10 @@
 from os.path import join as jp
+from os import makedirs
 from flask import render_template, render_template_string, abort, Markup,\
 send_from_directory, flash, redirect, g, request
 from flask_misaka import markdown
 from web import app
-from web.forms import make_form
+from web.forms import make_form, VotingForm
 from ruamel.yaml import YAML
 from threading import Lock
 import secrets
@@ -166,12 +167,13 @@ def apply(name):
                             'type': name,
                             'active': True,
                             'origin': request.remote_addr,
-                            'token': token
+                            'token': token,
+                            'responses': {}
                     }
 
                     submissions.update({appid: submission})
-                    print(submissions)
 
+                    makedirs(applyconfig['destination'], exist_ok=True)
                     with open(jp(applyconfig['destination'], appid+'.yml'), 'w') as f:
                         yaml.dump(submission_fields, f)
                     with open(jp(applyconfig['destination'], 'meta.yml'), 'w') as f:
@@ -190,15 +192,37 @@ def apply(name):
         abort(404)
 
 
-@app.route('/vote/<appid>', defaults={'token': None})
-@app.route('/vote/<appid>/<token>')
+@app.route('/vote/<appid>', defaults={'token': None}, methods=['GET', 'POST'])
+@app.route('/vote/<appid>/<token>', methods=['GET', 'POST'])
 def vote(appid, token):
 
-    # TODO
+    form = VotingForm()
+    meta_loaded = False
+
+    if form.validate_on_submit():
+        with apply_lock:
+            with open(jp(applyconfig['destination'], 'meta.yml')) as f:
+                submissions = yaml.load(f)
+                meta_loaded = True
+
+            submission = submissions[appid]
+
+            submission['responses'][request.remote_addr] = form.response.data
+
+            with open(jp(applyconfig['destination'], 'meta.yml'), 'w') as f:
+                yaml.dump(submissions, f)
+
+        flash('Thanks for voting! To change your vote, just vote again.')
+                
+
     with apply_lock:
 
-        with open(jp(applyconfig['destination'], 'meta.yml')) as f:
-            submissions = yaml.load(f)
+        try:
+            if not meta_loaded: 
+                with open(jp(applyconfig['destination'], 'meta.yml')) as f:
+                    submissions = yaml.load(f)
+        except FileNotFoundError:
+            abort(404)
 
         if not appid in submissions:
             abort(404)
@@ -206,12 +230,24 @@ def vote(appid, token):
         with open(jp(applyconfig['destination'], appid+'.yml')) as f:
             fields = yaml.load(f)
 
-        submission = submissions[appid]
+    submission = submissions[appid]
+    token_valid = (token is not None) and (token == submission['token'])
 
-        token_valid = (token is not None) and (token == submission['token'])
-        
-        return render_template('vote.html', submission=fields, metadata=submission,
-                               admin=token_valid)
+    total_results = len(submission['responses'])
+    yes_results = len([x for x in submission['responses'] if submission['responses'][x]])
+    no_results = total_results - yes_results
+    try:
+        percent_yes = yes_results * 100 / total_results
+        percent_no = no_results * 100 / total_results
+    except ZeroDivisionError:
+        percent_yes = percent_no = 50
+
+    results = {'yes': yes_results, 'no': no_results, 'total': total_results, 
+               'percent_yes': percent_yes, 'percent_no': percent_no}
+    
+    return render_template('vote.html', submission=fields, metadata=submission,
+                           admin=token_valid, form=form, addr=request.remote_addr,
+                           results=results)
 
 
 @app.errorhandler(404)

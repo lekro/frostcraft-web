@@ -3,10 +3,33 @@
 {% block title %}Application Voting{% endblock %}
 
 {% block content %}
-<h1>Vote for {{ metadata.type }} application</h1>
+<h1>Vote for {{ metadata.type }} application
+    {% if admin %}[admin view]{% endif %}</h1>
+
+{% if metadata.active %}
+<p>This application is <b>active</b>. Vote below!</p>
+{% else %}
+<p>This application is <b>inactive</b>. Voting is closed.</p>
+{% endif %}
+
+<!-- Show voting results -->
+{% if not metadata.active or addr in metadata.responses or admin %}
+<h2>Results</h2>
+
+<p><b>YES</b>: {{ results.yes }} / {{ results.total }}
+({{ results.percent_yes }}%)
+{% if metadata.responses[addr] %}&larr; your vote{% endif %}
+</p>
+<p><b>NO</b>: {{ results.no }} / {{ results.total }}
+({{ results.percent_no }}%)
+{% if not metadata.responses[addr] %}&larr; your vote{% endif %}
+</p>
+{% endif %}
+
+<h2>Submission</h2>
 
 {% for field in submission %}
-<h2>{{ field.name }}</h2>
+<h3>{{ field.name }}</h3>
 <p>
 {{ field.description }}
 {% if field.mask %}
@@ -19,4 +42,13 @@
 </pre>
 {% endif %}
 {% endfor %}
+
+<!-- Voting form -->
+<h2>Vote</h2>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>{{ form.response() }} {{ form.response.label }}</p>
+    <p>{{ form.submit() }}</p>
+</form>
+
 {% endblock %}

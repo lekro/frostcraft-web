@@ -4,6 +4,12 @@ from wtforms import StringField, BooleanField, SubmitField, TextAreaField,\
 from wtforms.validators import DataRequired
 
 
+class VotingForm(FlaskForm):
+
+    response = BooleanField('I would like to vote FOR this applicant.')
+    submit = SubmitField('Vote!')
+
+
 def make_form(config):
 
     class F(FlaskForm):
