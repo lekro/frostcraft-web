@@ -197,40 +197,39 @@ def apply(name):
 def vote(appid, token):
 
     form = VotingForm()
-    meta_loaded = False
-
-    if form.validate_on_submit():
-        with apply_lock:
+    with apply_lock:
+        try:
             with open(jp(applyconfig['destination'], 'meta.yml')) as f:
                 submissions = yaml.load(f)
-                meta_loaded = True
-
-            submission = submissions[appid]
-
-            submission['responses'][request.remote_addr] = form.response.data
-
-            with open(jp(applyconfig['destination'], 'meta.yml'), 'w') as f:
-                yaml.dump(submissions, f)
-
-        flash('Thanks for voting! To change your vote, just vote again.')
-                
-
-    with apply_lock:
-
-        try:
-            if not meta_loaded: 
-                with open(jp(applyconfig['destination'], 'meta.yml')) as f:
-                    submissions = yaml.load(f)
         except FileNotFoundError:
             abort(404)
 
-        if not appid in submissions:
-            abort(404)
+    if not appid in submissions:
+        abort(404)
+
+    submission = submissions[appid]
+
+    # When we get stuff from the VotingForm
+    if form.validate_on_submit() and appid in submissions:
+        
+        if submission['active']:
+            submission['responses'][request.remote_addr] = form.response.data
+
+            with apply_lock:
+
+                with open(jp(applyconfig['destination'], 'meta.yml'), 'w') as f:
+                    yaml.dump(submissions, f)
+
+            flash('Thanks for voting! To change your vote, just vote again.')
+        else:
+            flash('This application is closed. You can\'t vote.')
+
+    # Get the responses
+    with apply_lock:
 
         with open(jp(applyconfig['destination'], appid+'.yml')) as f:
             fields = yaml.load(f)
 
-    submission = submissions[appid]
     token_valid = (token is not None) and (token == submission['token'])
 
     total_results = len(submission['responses'])

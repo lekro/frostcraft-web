@@ -13,17 +13,24 @@
 {% endif %}
 
 <!-- Show voting results -->
-{% if not metadata.active or addr in metadata.responses or admin %}
+{% if (metadata.active and addr in metadata.responses) or admin %}
 <h2>Results</h2>
 
 <p><b>YES</b>: {{ results.yes }} / {{ results.total }}
 ({{ results.percent_yes }}%)
-{% if metadata.responses[addr] %}&larr; your vote{% endif %}
+{% if addr in metadata.responses and metadata.responses[addr] %}
+&larr; your vote
+{% endif %}
 </p>
 <p><b>NO</b>: {{ results.no }} / {{ results.total }}
 ({{ results.percent_no }}%)
-{% if not metadata.responses[addr] %}&larr; your vote{% endif %}
+{% if addr in metadata.responses and not metadata.responses[addr] %}
+&larr; your vote
+{% endif %}
 </p>
+{% elif not metadata.active %}
+<h2>Results</h2>
+<p>Results are hidden because voting is closed.</p>
 {% endif %}
 
 <h2>Submission</h2>
