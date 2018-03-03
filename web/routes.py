@@ -4,7 +4,7 @@ from flask import render_template, render_template_string, abort, Markup,\
 send_from_directory, flash, redirect, g, request
 from flask_misaka import markdown
 from web import app
-from web.forms import make_form, VotingForm
+from web.forms import make_form, VotingForm, VotingAdminForm
 from ruamel.yaml import YAML
 from threading import Lock
 import secrets
@@ -196,7 +196,8 @@ def apply(name):
 @app.route('/vote/<appid>/<token>', methods=['GET', 'POST'])
 def vote(appid, token):
 
-    form = VotingForm()
+    form = VotingForm(prefix='memberform')
+    adminform = VotingAdminForm(prefix='adminform')
     with apply_lock:
         try:
             with open(jp(applyconfig['destination'], 'meta.yml')) as f:
@@ -208,15 +209,15 @@ def vote(appid, token):
         abort(404)
 
     submission = submissions[appid]
+    token_valid = (token is not None) and (token == submission['token'])
 
     # When we get stuff from the VotingForm
-    if form.validate_on_submit() and appid in submissions:
+    if form.validate_on_submit() and form.submit.data:
         
         if submission['active']:
             submission['responses'][request.remote_addr] = form.response.data
 
             with apply_lock:
-
                 with open(jp(applyconfig['destination'], 'meta.yml'), 'w') as f:
                     yaml.dump(submissions, f)
 
@@ -224,13 +225,18 @@ def vote(appid, token):
         else:
             flash('This application is closed. You can\'t vote.')
 
+    if adminform.validate_on_submit() and token_valid and adminform.submit.data:
+
+        submission['active'] = not submission['active']
+        with apply_lock:
+            with open(jp(applyconfig['destination'], 'meta.yml'), 'w') as f:
+                yaml.dump(submissions, f)
+
     # Get the responses
     with apply_lock:
 
         with open(jp(applyconfig['destination'], appid+'.yml')) as f:
             fields = yaml.load(f)
-
-    token_valid = (token is not None) and (token == submission['token'])
 
     total_results = len(submission['responses'])
     yes_results = len([x for x in submission['responses'] if submission['responses'][x]])
@@ -246,7 +252,7 @@ def vote(appid, token):
     
     return render_template('vote.html', submission=fields, metadata=submission,
                            admin=token_valid, form=form, addr=request.remote_addr,
-                           results=results)
+                           results=results, adminform=adminform)
 
 
 @app.errorhandler(404)

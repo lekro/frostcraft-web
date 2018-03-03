@@ -10,6 +10,11 @@ class VotingForm(FlaskForm):
     submit = SubmitField('Vote!')
 
 
+class VotingAdminForm(FlaskForm):
+
+    submit = SubmitField('Activate/deactivate voting')
+
+
 def make_form(config):
 
     class F(FlaskForm):

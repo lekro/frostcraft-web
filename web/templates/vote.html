@@ -12,6 +12,13 @@
 <p>This application is <b>inactive</b>. Voting is closed.</p>
 {% endif %}
 
+{% if admin %}
+<form action="" method="post">
+    {{ adminform.hidden_tag() }}
+    {{ adminform.submit() }}
+</form>
+{% endif %}
+
 <!-- Show voting results -->
 {% if (metadata.active and addr in metadata.responses) or admin %}
 <h2>Results</h2>
@@ -52,10 +59,14 @@
 
 <!-- Voting form -->
 <h2>Vote</h2>
+{% if metadata.active %}
 <form action="" method="post">
     {{ form.hidden_tag() }}
     <p>{{ form.response() }} {{ form.response.label }}</p>
     <p>{{ form.submit() }}</p>
 </form>
+{% else %}
+<p>You can't vote because voting is closed.</p>
+{% endif %}
 
 {% endblock %}
