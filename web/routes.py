@@ -190,6 +190,30 @@ def apply(name):
         abort(404)
 
 
+@app.route('/vote/<appid>', defaults={'token': None})
+@app.route('/vote/<appid>/<token>')
+def vote(appid, token):
+
+    # TODO
+    with apply_lock:
+
+        with open(jp(applyconfig['destination'], 'meta.yml')) as f:
+            submissions = yaml.load(f)
+
+        if not appid in submissions:
+            abort(404)
+
+        with open(jp(applyconfig['destination'], appid+'.yml')) as f:
+            fields = yaml.load(f)
+
+        submission = submissions[appid]
+
+        token_valid = (token is not None) and (token == submission['token'])
+        
+        return render_template('vote.html', submission=fields, metadata=submission,
+                               admin=token_valid)
+
+
 @app.errorhandler(404)
 def not_found(error):
 
