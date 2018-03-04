@@ -143,6 +143,9 @@ def apply(name):
 
                 for submission in submissions:
                     s = submissions[submission]
+                    # Allow people to apply to different types
+                    if s['type'] != name:
+                        continue
                     delta = datetime.utcnow() - s['timestamp']
                     delta = timedelta(days=delta.days, seconds=delta.seconds)
                     if s['origin'] == request.remote_addr:
