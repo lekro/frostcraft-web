@@ -5,8 +5,9 @@ send_from_directory, flash, redirect, g, request
 from flask_misaka import markdown
 from web import app
 from web.forms import make_form, VotingForm, VotingAdminForm
+from web.discord import send_application
 from ruamel.yaml import YAML
-from threading import Lock
+from threading import Lock, Thread
 import secrets
 
 # Lock on all application related stuff.
@@ -151,6 +152,8 @@ def apply(name):
                     submission_fields = []
                     submission = {}
 
+                    first_value = None
+
                     for field in form:
                         if field.flags.dynamic:
                             fieldval = {
@@ -160,6 +163,10 @@ def apply(name):
                                     'mask': False
                             }
                             submission_fields.append(fieldval)
+
+                            if first_value is None:
+                                first_value = field.data
+
                         if field.flags.mask and field.data:
                             submission_fields[-1]['mask'] = True
 
@@ -180,6 +187,13 @@ def apply(name):
                         yaml.dump(submissions, f)
 
                     flash('Application submitted! Good luck!')
+
+                    discord_thread = Thread(target=send_application,
+                                            args=(config['discord-webhook'],
+                                                'http://'+config['hostname']+''
+                                                '/vote/{}'.format(appid), token),
+                                                kwargs={'name': first_value})
+                    discord_thread.start()
                 else:
                     flash('Your IP address already has an application on file!')
 
