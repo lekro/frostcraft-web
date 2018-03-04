@@ -8,6 +8,7 @@ from web.forms import make_form, VotingForm, VotingAdminForm
 from web.discord import send_application
 from ruamel.yaml import YAML
 from threading import Lock, Thread
+from datetime import datetime, timedelta
 import secrets
 
 # Lock on all application related stuff.
@@ -138,12 +139,21 @@ def apply(name):
                     submissions = {}
                 application_valid = True
 
+                mindelta = timedelta(days=applyconfig['apply-delay'])
+
                 for submission in submissions:
                     s = submissions[submission]
-                    if s['origin'] == request.remote_addr \
-                            and s['active']:
-                        application_valid = False
-                        break
+                    delta = datetime.utcnow() - s['timestamp']
+                    delta = timedelta(days=delta.days, seconds=delta.seconds)
+                    if s['origin'] == request.remote_addr:
+                        if s['active']:
+                            application_valid = False
+                            break
+                        if delta < mindelta:
+                            application_valid = False
+                            break
+                            flash('Wait {} before applying again!'
+                                    ''.format(str(mindelta-delta)))
 
                 if application_valid:
                     
@@ -174,6 +184,7 @@ def apply(name):
                             'type': name,
                             'active': True,
                             'origin': request.remote_addr,
+                            'timestamp': datetime.utcnow(),
                             'token': token,
                             'responses': {}
                     }
@@ -195,7 +206,8 @@ def apply(name):
                                                 kwargs={'name': first_value})
                     discord_thread.start()
                 else:
-                    flash('Your IP address already has an application on file!')
+                    flash('You have already applied! Ask an operator if you '
+                            'believe this to be a mistake.')
 
             return redirect('/')
 
