@@ -44,7 +44,7 @@ social media/website/other links added or changed, contact
 
         <tr>
 
-            <td><img src="https://crafatar.com/avatars/{{ member.uuid }}?size=32"></td>
+            <td><img src="https://crafatar.com/avatars/{{ member.uuid }}?size=32&overlay"></td>
             <td>
                 {% if member.url is defined %}
                 <a href="{{ member.url }}">{{ member.name }}</a>
@@ -52,15 +52,20 @@ social media/website/other links added or changed, contact
                 {{ member.name }}
                 {% endif %}
                 <td>
+                    {% if member.roles is defined %}
                     {% for role in member.roles %}
                     <span class="{{ role.class }}">{{ role.name }}</span>
                     {% if loop.index % 2 == 0 %}<br>{% endif %}
                     {% endfor %}
+                    {% endif %}
                 </td>
                 <td>
+                    {% if member.media is defined %}
                     {% for medium in member.media %}
                     {% if medium.handle is defined %}
+                    {% if medium.platform is defined %}
                     {{ medium.platform }}: 
+                    {% endif %}
                     {% if medium.url is defined %}
                     <a class="nounder" href="{{ medium.url }}"><code>{{ medium.handle }}</code></a>
                     {% else %}
@@ -72,6 +77,7 @@ social media/website/other links added or changed, contact
                     {% endif %}
                     <br>
                     {% endfor %}
+                    {% endif %}
                 </td>
 
         </tr>

@@ -65,7 +65,8 @@ def members():
         roles = member_info['roles']
 
         for member in members:
-            member.roles = [{'class': 'role_'+role, 
+            if 'roles' in member:
+                member.roles = [{'class': 'role_'+role, 
                              'name': roles[role]['name']} for role in member['roles']]
 
     except OSError:
