@@ -86,6 +86,9 @@ def docs(article):
     try:
         with open(article_path) as f:
             content = markdown(f.read(), fenced_code=True)
+
+        if article is None:
+            article = 'Documentation Index'
         return render_template('content.html', title=article, content=content)
     except OSError:
         abort(404)
