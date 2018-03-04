@@ -9,6 +9,6 @@ fi
 python3 -m venv venv
 . venv/bin/activate
 
-pip install flask flask-misaka flask-wtf ruamel.yaml requests
+pip install flask flask-misaka flask-wtf ruamel.yaml requests uwsgi
 
 
