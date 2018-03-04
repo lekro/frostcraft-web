@@ -1,5 +1,5 @@
 from os.path import join as jp
-from os import makedirs
+from os import makedirs, urandom
 from flask import render_template, render_template_string, abort, Markup,\
 send_from_directory, flash, redirect, g, request
 from flask_misaka import markdown
@@ -9,7 +9,7 @@ from web.discord import send_application
 from ruamel.yaml import YAML
 from threading import Lock, Thread
 from datetime import datetime, timedelta
-import secrets
+from binascii import hexlify
 
 # Lock on all application related stuff.
 # Because this is so low-volume, we can just keep one
@@ -164,8 +164,8 @@ def apply(name):
 
                 if application_valid:
                     
-                    appid = secrets.token_hex(32)
-                    token = secrets.token_hex(32)
+                    appid = hexlify(os.urandom(32))
+                    token = hexlify(os.urandom(32))
                     submission_fields = []
                     submission = {}
 
