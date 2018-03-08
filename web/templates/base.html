@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html prefix="og: http://ogp.me/ns#">
 
     <head>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
         <title>{% block title %} {% endblock %} - FrostCraft</title>
+        <meta property="og:title" content="{{ self.title() }} - FrostCraft" />
+        <meta property="og:type" content="article" />
+        <meta property="og:image" content="{{ url_for('static', filename='logo.png') }}" />
+        <meta property="og:url" content="{{ request.url }}" />
         {% block head %} {% endblock %}
     </head>
 
