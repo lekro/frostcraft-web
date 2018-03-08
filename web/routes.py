@@ -117,13 +117,16 @@ def docs(article):
         try:
             parser.feed(content)
             title = article
+            blurb = None
         except StopIteration:
             title = parser.title
+            blurb = parser.blurb
 
         if article is None:
             title = 'Documentation Index'
 
-        return render_template('content.html', title=title, content=content)
+        return render_template('content.html', title=title, content=content,
+                               blurb=blurb)
             content = markdown(f.read(), fenced_code=True)
 
     except OSError:

@@ -9,6 +9,10 @@
         <meta property="og:type" content="article" />
         <meta property="og:image" content="{{ url_for('static', filename='logo.png') }}" />
         <meta property="og:url" content="{{ request.url }}" />
+        <meta property="og:site_name" content="FrostCraft" />
+        {% if blurb is defined and blurb is not none %}
+        <meta property="og:description" content="{{ blurb }}" />
+        {% endif %}
         {% block head %} {% endblock %}
     </head>
 
