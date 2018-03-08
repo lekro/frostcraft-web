@@ -246,8 +246,8 @@ def apply(name):
 
                     discord_thread = Thread(target=send_application,
                                             args=(config['discord-webhook'],
-                                                'http://'+config['hostname']+''
-                                                '/vote/{}'.format(appid), token),
+                                                request.url_root + ''
+                                                'vote/{}'.format(appid), token),
                                                 kwargs={'name': first_value})
                     discord_thread.start()
                 else:
