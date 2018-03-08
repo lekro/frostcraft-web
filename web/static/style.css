@@ -52,6 +52,10 @@ iframe {
     box-shadow: 0px 0px 24px rgba(0,0,255,0.3);
 }
 
+div.g-recaptcha {
+    margin-bottom: 6px;
+}
+
 div.index {
     margin: 12px 0px;
     /*font-size: 120%;*/
@@ -116,6 +120,10 @@ a:hover, a:active {
     text-shadow: 0px 0px 6px #8888ff;
 }
 
+a.button {
+    text-shadow: none;
+}
+
 div.members {
     font-size: 24px;
     /* line-height: 200%; */
@@ -164,7 +172,7 @@ th, td {
     vertical-align: middle;
 }
 
-input, textarea {
+input, textarea, a.button {
     border: 1px solid #222266;
     color: #222266;
     background-color: #e0e6ff;
@@ -176,13 +184,13 @@ input, textarea {
     box-shadow: 0px 0px 8px rgba(0,0,255,0.1);
 }
 
-input:hover, textarea:hover {
+input:hover, textarea:hover, a.button:hover {
     background-color: #e4eaff;
     box-shadow: 0px 0px 8px rgba(0,0,255,0.3);
     outline-width: 0;
 }
 
-input:focus, textarea:focus {
+input:focus, textarea:focus, a.button:hover {
     background-color: #e4eaff;
     box-shadow: 0px 0px 16px rgba(0,0,255,0.4);
     outline-width: 0;
@@ -210,6 +218,14 @@ div.flash {
     border-radius: 8px;
     display: inline-block;
     padding: 16px 20px;
+}
+
+div.appitem {
+    border-radius: 8px;
+    border: 1px solid #444488;
+    /* background-color: #e8eeff; */
+    display: inline-block;
+    padding: 0px 16px 16px 16px;
 }
 
 span.formerror {

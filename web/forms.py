@@ -1,6 +1,18 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, SubmitField, TextAreaField
+from flask_wtf import FlaskForm, RecaptchaField
+from wtforms import StringField, BooleanField, SubmitField, TextAreaField,\
+        IntegerField
 from wtforms.validators import DataRequired
+
+
+class VotingForm(FlaskForm):
+
+    response = BooleanField('I would like to vote FOR this applicant.')
+    submit = SubmitField('Vote!')
+
+
+class VotingAdminForm(FlaskForm):
+
+    submit = SubmitField('Activate/deactivate voting')
 
 
 def make_form(config):
@@ -10,6 +22,8 @@ def make_form(config):
 
     dynamic_fields = []
 
+    F.recaptcha = RecaptchaField()
+    # F.recaptcha = BooleanField('captcha placeholder')
     F.agree = BooleanField('I am 13 years of age or older',
                            validators=[DataRequired(message='You must '
                                'be 13 years of age or older to apply.')])
@@ -37,9 +51,12 @@ def make_form(config):
 
         # Add maskable checkbox
         if 'maskable' in field and field['maskable']:
-            formfield = BooleanField(config['mask-label'])
-            setattr(f, field['name'] + '_mask', formfield)
-            dynamic_fields.append(field['name'] + config['mask-label'])
+            if 'mask-label' in config:
+                label = config['mask-label']
+            else:
+                label = 'Mask this field'
+            formfield = BooleanField(label)
+            setattr(F, field['name'] + '_mask', formfield)
 
     form = F()
 

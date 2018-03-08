@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Application Voting{% endblock %}
+
+{% block content %}
+<h1>Vote for {{ metadata.type }} application
+    {% if admin %}[admin view]{% endif %}</h1>
+
+{% if metadata.active %}
+<p>This application is <b>active</b>. Vote below!</p>
+{% else %}
+<p>This application is <b>inactive</b>. Voting is closed.</p>
+{% endif %}
+
+{% if admin %}
+<form action="" method="post">
+    {{ adminform.hidden_tag() }}
+    {{ adminform.submit() }}
+</form>
+{% endif %}
+
+<!-- Show voting results -->
+{% if (metadata.active and addr in metadata.responses) or admin %}
+<h2>Results</h2>
+
+<p><b>YES</b>: {{ results.yes }} / {{ results.total }}
+({{ results.percent_yes }}%)
+{% if addr in metadata.responses and metadata.responses[addr] %}
+&larr; your vote
+{% endif %}
+</p>
+<p><b>NO</b>: {{ results.no }} / {{ results.total }}
+({{ results.percent_no }}%)
+{% if addr in metadata.responses and not metadata.responses[addr] %}
+&larr; your vote
+{% endif %}
+</p>
+{% elif not metadata.active %}
+<h2>Results</h2>
+<p>Results are hidden because voting is closed.</p>
+{% endif %}
+
+<h2>Submission</h2>
+
+{% for field in submission %}
+<h3>{{ field.name }}</h3>
+<p>
+{{ field.description }}
+{% if field.mask %}
+[this field has been hidden from non-operators]
+{% endif %}
+</p>
+{% if not field.mask or admin %}
+<pre>
+{{ field.value }}
+</pre>
+{% endif %}
+{% endfor %}
+
+<!-- Voting form -->
+<h2>Vote</h2>
+{% if metadata.active %}
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>{{ form.response() }} {{ form.response.label }}</p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% else %}
+<p>You can't vote because voting is closed.</p>
+{% endif %}
+
+{% endblock %}

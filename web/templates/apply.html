@@ -21,6 +21,7 @@ use of cookies.
 <form action="" method="post">
     {{ form.hidden_tag() }}
     {% for field in form %}
+
     {% if field.flags.dynamic %}
     <p>
     <h3>{{ field.label }}
@@ -34,13 +35,33 @@ use of cookies.
     {{ field(size=32) }}
     </p>
     {% endif %}
+
+    {% if field.flags.mask %}
+    {{ field() }} {{ field.label }}<br>
+    {% endif %}
+
     {% endfor %}
     <p>
+    {{ form.recaptcha() }}
+    {% for error in form.recaptcha.errors %}
+    <span class="formerror">{{ error }}
+    (maybe you didn't click the captcha?)</span><br>
+    {% endfor %}
+    <br>
     {{ form.agree() }} {{ form.agree.label }}<br>
     {% for error in form.agree.errors %}
     <span class="formerror">{{ error }}</span><br>
     {% endfor %}
     </p>
+
+    <p>Please allow up to a week to hear back from us
+    in Discord. If you don't hear back in this time,
+    consider your application denied.</p>
+
+    <p>Note that once you submit your application, you
+    won't be able to change it. Make sure the data in the
+    above fields is correct.</p>
+
     <p>{{ form.submit() }}</p>
 </form>
 {% endblock %}
