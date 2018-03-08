@@ -58,8 +58,36 @@ def docs(article):
 
     try:
         with open(article_path) as f:
-            content = markdown(f.read(), fenced_code=True)
-        return render_template('content.html', title=article, content=content)
+            md = f.read()
+
+        content = markdown(md, fenced_code=True)
+
+        # Instantiate an HTML parser so we can extract what's in <h1>
+        class TitleParser(HTMLParser):
+
+            def __init__(self):
+                super.__init__(self)
+                self.read_title = False
+                self.title = None
+
+            def handle_starttag(self, tag):
+                if tag == 'h1':
+                    self.read_title = True
+
+            def handle_data(self, data):
+                if self.read_title and self.title is not None:
+                    self.title = data
+                    # Stop the parser from going through the entire document
+                    raise StopIteration()
+
+        parser = TitleParser()
+        try:
+            parser.feed(content)
+            title = article
+        except StopIteration:
+            title = parser.title
+
+        return render_template('content.html', title=title, content=content)
     except OSError:
         abort(404)
 
@@ -102,7 +130,7 @@ def not_found(error):
         # Try and find a custom 404 page
         with open(jp(config['markdown-dir'], '404.md')) as f:
             content = markdown(f.read())
-            return render_template('content.html', title='404', content=content), 404
+        return render_template('content.html', title='404', content=content), 404
     except OSError:
         # If we don't find one use this default ugly one
         return render_template('content.html', title='404', 
