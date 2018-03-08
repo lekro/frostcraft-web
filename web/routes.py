@@ -98,13 +98,18 @@ def docs(article):
                 self.read_title = False
                 self.title = None
 
-            def handle_starttag(self, tag):
+            def handle_starttag(self, tag, attrs):
                 if tag == 'h1':
                     self.read_title = True
+                if tag == 'p':
+                    self.read_blurb = True
 
             def handle_data(self, data):
                 if self.read_title and self.title is not None:
                     self.title = data
+                if self.read_blurb and self.blurb is not None:
+                    self.blurb = data
+                if self.blurb is not None and self.title is not None:
                     # Stop the parser from going through the entire document
                     raise StopIteration()
 
