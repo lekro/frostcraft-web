@@ -349,3 +349,7 @@ def favicon():
                                mimetype='image/vnd.microsoft.icon')
 
 
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(jp(app.root_path, 'static'), 'robots.txt')
+
