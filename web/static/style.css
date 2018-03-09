@@ -209,6 +209,10 @@ input[type=button], input[type=submit], input[type=reset] {
     cursor: pointer;
 }
 
+input[type=radio] {
+    box-shadow: none;
+}
+
 div.flashbox {
     text-align: center;
 }

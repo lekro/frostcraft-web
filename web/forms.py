@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, BooleanField, SubmitField, TextAreaField,\
-        IntegerField
+        IntegerField, RadioField
 from wtforms.validators import DataRequired
 
 
@@ -45,6 +45,15 @@ def make_form(config):
             formfield = TextAreaField(**kwargs)
         if field['type'] == 'integer':
             formfield = IntegerField(**kwargs)
+        if field['type'] == 'options':
+            choices = []
+            for choice in field['choices']:
+                if type(choice) == str:
+                    choices.append((choice, choice))
+                else:
+                    choices.append(tuple(choice))
+
+            formfield = RadioField(**kwargs, choices=choices)
 
         setattr(F, field['name'], formfield)
         dynamic_fields.append(field['name'])

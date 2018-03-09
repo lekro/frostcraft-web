@@ -32,7 +32,15 @@ use of cookies.
     {% for error in field.errors %}
     <span class="formerror">{{ error }}</span><br>
     {% endfor %}
+
+    <!-- Treat option fields differently -->
+    {% if 'RadioField' in field.__class__.__name__ %}
+    {% for subfield in field %}
+    {{ subfield }} {{ subfield.value }} {{ subfield.label }}<br>
+    {% endfor %}
+    {% else %}
     {{ field(size=32) }}
+    {% endif %}
     </p>
     {% endif %}
 
