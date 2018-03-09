@@ -10,6 +10,7 @@ from ruamel.yaml import YAML
 from threading import Lock, Thread
 from datetime import datetime, timedelta
 from binascii import hexlify
+from html.parser import HTMLParser
 
 # Lock on all application related stuff.
 # Because this is so low-volume, we can just keep one
@@ -94,9 +95,11 @@ def docs(article):
         class TitleParser(HTMLParser):
 
             def __init__(self):
-                super.__init__(self)
+                super().__init__()
                 self.read_title = False
+                self.read_blurb = False
                 self.title = None
+                self.blurb = None
 
             def handle_starttag(self, tag, attrs):
                 if tag == 'h1':
@@ -105,9 +108,9 @@ def docs(article):
                     self.read_blurb = True
 
             def handle_data(self, data):
-                if self.read_title and self.title is not None:
+                if self.read_title and self.title is None:
                     self.title = data
-                if self.read_blurb and self.blurb is not None:
+                if self.read_blurb and self.blurb is None:
                     self.blurb = data
                 if self.blurb is not None and self.title is not None:
                     # Stop the parser from going through the entire document
@@ -127,7 +130,6 @@ def docs(article):
 
         return render_template('content.html', title=title, content=content,
                                blurb=blurb)
-            content = markdown(f.read(), fenced_code=True)
 
     except OSError:
         abort(404)
