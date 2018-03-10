@@ -181,7 +181,7 @@ def apply(name):
                                            '<p>This application is '
                                            'currently closed.</p>')
 
-        form = make_form(application)
+        form = make_form(application, use_recaptcha=config['enable-recaptcha'])
 
         if form.validate_on_submit():
 
@@ -220,7 +220,7 @@ def apply(name):
                     submission_fields = []
                     submission = {}
 
-                    first_value = None
+                    primary_value = None
 
                     for field in form:
                         if field.flags.dynamic:
@@ -232,14 +232,15 @@ def apply(name):
                             }
                             submission_fields.append(fieldval)
 
-                            if first_value is None:
-                                first_value = field.data
+                            if field.flags.primary:
+                                primary_value = field.data
 
                         if field.flags.mask and field.data:
                             submission_fields[-1]['mask'] = True
 
                     submission = {
                             'type': name,
+                            'name': primary_field,
                             'active': True,
                             'origin': request.remote_addr,
                             'timestamp': datetime.utcnow(),
@@ -261,7 +262,7 @@ def apply(name):
                                             args=(config['discord-webhook'],
                                                 request.url_root + ''
                                                 'vote/{}'.format(appid), token),
-                                                kwargs={'name': first_value})
+                                                kwargs={'name': primary_value})
                     discord_thread.start()
                 else:
                     flash('You have already applied! Ask an operator if you '

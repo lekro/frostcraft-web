@@ -15,15 +15,19 @@ class VotingAdminForm(FlaskForm):
     submit = SubmitField('Activate/deactivate voting')
 
 
-def make_form(config):
+def make_form(config, use_recaptcha=True):
 
     class F(FlaskForm):
         pass
 
     dynamic_fields = []
+    primary_field = None
 
-    F.recaptcha = RecaptchaField()
-    # F.recaptcha = BooleanField('captcha placeholder')
+    if use_recaptcha:
+        F.recaptcha = RecaptchaField()
+    else:
+        F.recaptcha = BooleanField('captcha placeholder')
+
     F.agree = BooleanField('I am 13 years of age or older',
                            validators=[DataRequired(message='You must '
                                'be 13 years of age or older to apply.')])
@@ -38,6 +42,8 @@ def make_form(config):
 
         if 'description' in field:
             kwargs.update(description=field['description'])
+        if 'primary' in field and field['primary']:
+            primary_field = field['name']
 
         if field['type'] == 'field':
             formfield = StringField(**kwargs)
@@ -72,6 +78,8 @@ def make_form(config):
     for field in form:
         if field.name in dynamic_fields:
             field.flags.dynamic = True
+        if field.name == primary_field:
+            field.flags.primary = True
         if '_mask' in field.name:
             field.flags.mask = True
     return form

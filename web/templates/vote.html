@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Application Voting{% endblock %}
+{% block title %}
+
+Vote for
+{% if metadata.name is not none %}{{ metadata.name }}'s{% endif %}
+{{ metadata.type }} application
+{% if admin %}[admin view]{% endif %}
+
+{% endblock %}
 
 {% block content %}
-<h1>Vote for {{ metadata.type }} application
-    {% if admin %}[admin view]{% endif %}</h1>
+
+<h1>{{ self.title() }}</h1>
 
 {% if metadata.active %}
 <p>This application is <b>active</b>. Vote below!</p>
