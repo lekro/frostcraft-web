@@ -47,9 +47,10 @@ Vote for
 <p>Results are hidden because voting is closed.</p>
 {% endif %}
 
-<h2>Submission</h2>
+<h1>Submission</h1>
 
 {% for field in submission %}
+{% if field.name %}
 <h3>{{ field.name }}</h3>
 <p>
 {{ field.description }}
@@ -62,10 +63,13 @@ Vote for
 {{ field.value }}
 </pre>
 {% endif %}
+{% else %}
+<h2>{{ field }}</h2>
+{% endif %}
 {% endfor %}
 
 <!-- Voting form -->
-<h2>Vote</h2>
+<h1>Vote</h1>
 {% if metadata.active %}
 <form action="" method="post">
     {{ form.hidden_tag() }}

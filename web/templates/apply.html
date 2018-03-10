@@ -33,8 +33,8 @@ use of cookies.
     <span class="formerror">{{ error }}</span><br>
     {% endfor %}
 
-    <!-- Treat option fields differently -->
     {% if 'RadioField' in field.__class__.__name__ %}
+    <!-- Treat option fields differently -->
     {% for subfield in field %}
     {{ subfield }} {{ subfield.value }} {{ subfield.label }}<br>
     {% endfor %}
@@ -46,6 +46,15 @@ use of cookies.
 
     {% if field.flags.mask %}
     {{ field() }} {{ field.label }}<br>
+    {% endif %}
+
+    {% if 'SectionField' in field.__class__.__name__ %}
+    <h2>{{ field.label.text }}</h2>
+    {% if field.description %}
+    <p>
+    {{ field.description }}
+    </p>
+    {% endif %}
     {% endif %}
 
     {% endfor %}

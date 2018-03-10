@@ -1,7 +1,16 @@
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, BooleanField, SubmitField, TextAreaField,\
-        IntegerField, RadioField
+        IntegerField, RadioField, Field
+from wtforms.widgets import HiddenInput
 from wtforms.validators import DataRequired
+
+
+class SectionField(Field):
+    widget = HiddenInput()
+    section = True
+
+    def _value(self):
+        return self.name
 
 
 class VotingForm(FlaskForm):
@@ -35,7 +44,7 @@ def make_form(config, use_recaptcha=True):
     for field in config['fields']:
 
         validators = []
-        if field['required']:
+        if 'required' in field and field['required']:
             validators.append(DataRequired())
 
         kwargs = {'label': field['name'], 'validators': validators}
@@ -44,6 +53,8 @@ def make_form(config, use_recaptcha=True):
             kwargs.update(description=field['description'])
         if 'primary' in field and field['primary']:
             primary_field = field['name']
+
+        display_label = True
 
         if field['type'] == 'field':
             formfield = StringField(**kwargs)
@@ -60,9 +71,14 @@ def make_form(config, use_recaptcha=True):
                     choices.append(tuple(choice))
 
             formfield = RadioField(**kwargs, choices=choices)
+        if field['type'] == 'section':
+            formfield = SectionField(**kwargs)
+            display_label = False
 
         setattr(F, field['name'], formfield)
-        dynamic_fields.append(field['name'])
+
+        if display_label:
+            dynamic_fields.append(field['name'])
 
         # Add maskable checkbox
         if 'maskable' in field and field['maskable']:

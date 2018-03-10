@@ -215,8 +215,8 @@ def apply(name):
 
                 if application_valid:
                     
-                    appid = hexlify(os.urandom(32))
-                    token = hexlify(os.urandom(32))
+                    appid = str(hexlify(urandom(32)), 'ascii')
+                    token = str(hexlify(urandom(32)), 'ascii')
                     submission_fields = []
                     submission = {}
 
@@ -238,9 +238,12 @@ def apply(name):
                         if field.flags.mask and field.data:
                             submission_fields[-1]['mask'] = True
 
+                        if hasattr(field, 'section'):
+                            submission_fields.append(field.name)
+
                     submission = {
                             'type': name,
-                            'name': primary_field,
+                            'name': primary_value,
                             'active': True,
                             'origin': request.remote_addr,
                             'timestamp': datetime.utcnow(),
