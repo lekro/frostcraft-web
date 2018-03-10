@@ -88,6 +88,10 @@ def make_form(config, use_recaptcha=True):
                 label = 'Mask this field'
             formfield = BooleanField(label)
             setattr(F, field['name'] + '_mask', formfield)
+        # Add other box
+        if 'specify-other' in field and field['specify-other']:
+            formfield = StringField(label='Specify other:')
+            setattr(F, field['name'] + '_other', formfield)
 
     form = F()
 
@@ -98,5 +102,8 @@ def make_form(config, use_recaptcha=True):
             field.flags.primary = True
         if '_mask' in field.name:
             field.flags.mask = True
+        if '_other' in field.name:
+            field.flags.other = True
     return form
+
 

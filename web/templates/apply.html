@@ -48,6 +48,10 @@ use of cookies.
     {{ field() }} {{ field.label }}<br>
     {% endif %}
 
+    {% if field.flags.other %}
+    {{ field.label }}<br>{{ field() }}<br>
+    {% endif %}
+
     {% if 'SectionField' in field.__class__.__name__ %}
     <h2>{{ field.label.text }}</h2>
     {% if field.description %}

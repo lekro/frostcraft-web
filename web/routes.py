@@ -238,6 +238,9 @@ def apply(name):
                         if field.flags.mask and field.data:
                             submission_fields[-1]['mask'] = True
 
+                        if field.flags.other and field.data:
+                            submission_fields[-1]['value'] = field.data
+
                         if hasattr(field, 'section'):
                             submission_fields.append(field.name)
 
