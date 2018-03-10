@@ -36,57 +36,10 @@ with apply_lock:
         applications_enabled = False
 
 
-@app.before_request
-def check_applications_enabled():
-    g.applications_enabled = applications_enabled
-
-
-@app.route('/')
-@app.route('/index')
-def index():
-    try:
-        with open(jp(config['markdown-dir'], 'home.md')) as f:
-            content = markdown(f.read())
-            content = render_template_string(content,
-                                             discord=Markup(config['discord-url']),
-                                             patreon=Markup(config['patreon-url']),
-                                             html=True)
-        return render_template('content.html', title='Home', content=content)
-    except OSError:
-        abort(404)
-
-
-@app.route('/members')
-def members():
+def render_markdown(path, name=None):
 
     try:
-        with open('members.yml') as f:
-            member_info = yaml.load(f)
-        members = member_info['members']
-        roles = member_info['roles']
-
-        for member in members:
-            if 'roles' in member:
-                member.roles = [{'class': 'role_'+role, 
-                             'name': roles[role]['name']} for role in member['roles']]
-
-    except OSError:
-        members = None
-        roles = None
-
-    return render_template('members.html', title='Members', members=members, roles=roles)
-
-
-@app.route('/docs', defaults={'article': None}) 
-@app.route('/docs/<article>')
-def docs(article):
-    if article is None:
-        article_path = jp(config['markdown-dir'], 'docs.md')
-    else:
-        article_path = jp(config['docs-dir'], article+'.md')
-
-    try:
-        with open(article_path) as f:
+        with open(path) as f:
             md = f.read()
 
         content = markdown(md, fenced_code=True)
@@ -119,13 +72,13 @@ def docs(article):
         parser = TitleParser()
         try:
             parser.feed(content)
-            title = article
+            title = name
             blurb = None
         except StopIteration:
             title = parser.title
             blurb = parser.blurb
 
-        if article is None:
+        if name is None:
             title = 'Documentation Index'
 
         return render_template('content.html', title=title, content=content,
@@ -133,6 +86,54 @@ def docs(article):
 
     except OSError:
         abort(404)
+
+
+@app.before_request
+def check_applications_enabled():
+    g.applications_enabled = applications_enabled
+
+
+@app.route('/')
+@app.route('/index')
+def index():
+    return render_markdown(jp(config['markdown-dir'], 'home.md'), name='Home')
+
+
+@app.route('/credits')
+def credits():
+    return render_markdown(jp(config['markdown-dir'], 'credits.md'), name='Credits')
+
+
+@app.route('/members')
+def members():
+
+    try:
+        with open('members.yml') as f:
+            member_info = yaml.load(f)
+        members = member_info['members']
+        roles = member_info['roles']
+
+        for member in members:
+            if 'roles' in member:
+                member.roles = [{'class': 'role_'+role, 
+                             'name': roles[role]['name']} for role in member['roles']]
+
+    except OSError:
+        members = None
+        roles = None
+
+    return render_template('members.html', title='Members', members=members, roles=roles)
+
+
+@app.route('/docs', defaults={'article': None}) 
+@app.route('/docs/<article>')
+def docs(article):
+    if article is None:
+        article_path = jp(config['markdown-dir'], 'docs.md')
+    else:
+        article_path = jp(config['docs-dir'], article+'.md')
+
+    return render_markdown(article_path, name=article)
 
 
 @app.route('/apply')
