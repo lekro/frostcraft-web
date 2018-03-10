@@ -96,7 +96,17 @@ def check_applications_enabled():
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_markdown(jp(config['markdown-dir'], 'home.md'), name='Home')
+    try:
+        with open(jp(config['markdown-dir'], 'home.md')) as f:
+            content = markdown(f.read())
+        content = render_template_string(content,
+                    discord=Markup(config['discord-url']),
+                    patreon=Markup(config['patreon-url']),
+                    html=True)
+        return render_template('content.html', title='Home', content=content)
+    except OSError:
+        abort(404)
+
 
 
 @app.route('/credits')
