@@ -1,11 +1,14 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata|Lato');
 
 body, html {
-    /*background-color: #cce0ff;*/
     background-color: #eef8ff;
     color: #222266;
     font-family: 'Lato', sans-serif;
     font-size: 14pt;
+}
+
+body {
+    /*background-color: #cce0ff;*/
     margin: 32px 5% 32px;
 }
 
