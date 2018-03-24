@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, BooleanField, SubmitField, TextAreaField,\
         IntegerField, RadioField, Field
 from wtforms.widgets import HiddenInput
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Length
 
 
 class SectionField(Field):
@@ -43,7 +43,7 @@ def make_form(config, use_recaptcha=True):
     F.submit = SubmitField('Apply!')
     for field in config['fields']:
 
-        validators = []
+        validators = [Length(max=config['max-length'])]
         if 'required' in field and field['required']:
             validators.append(DataRequired())
 

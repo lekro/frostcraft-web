@@ -278,7 +278,8 @@ def apply(name):
 
         return render_template('apply.html', form=form,
                                form_name=application['name'],
-                               form_description=application['description'])
+                               form_description=application['description'],
+                               response_limit=application['max-length'])
     else:
         abort(404)
 
