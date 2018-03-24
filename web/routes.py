@@ -339,6 +339,10 @@ def vote(appid, token):
     except ZeroDivisionError:
         percent_yes = percent_no = 50
 
+    # Format to two decimal places only.
+    percent_yes = "%.2f" % percent_yes
+    percent_no = "%.2f" % percent_no
+
     results = {'yes': yes_results, 'no': no_results, 'total': total_results, 
                'percent_yes': percent_yes, 'percent_no': percent_no}
     
