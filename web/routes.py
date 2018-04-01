@@ -42,7 +42,7 @@ def render_markdown(path, name=None):
         with open(path) as f:
             md = f.read()
 
-        content = markdown(md, fenced_code=True, markdown=True)
+        content = markdown(md, fenced_code=True, smartypants=True)
 
         # Instantiate an HTML parser so we can extract what's in <h1>
         class TitleParser(HTMLParser):
