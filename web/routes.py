@@ -42,7 +42,7 @@ def render_markdown(path, name=None):
         with open(path) as f:
             md = f.read()
 
-        content = markdown(md, fenced_code=True)
+        content = markdown(md, fenced_code=True, markdown=True)
 
         # Instantiate an HTML parser so we can extract what's in <h1>
         class TitleParser(HTMLParser):
@@ -98,7 +98,7 @@ def check_applications_enabled():
 def index():
     try:
         with open(jp(config['markdown-dir'], 'home.md')) as f:
-            content = markdown(f.read())
+            content = markdown(f.read(), smartypants=True)
         content = render_template_string(content,
                     discord=Markup(config['discord-url']),
                     patreon=Markup(config['patreon-url']),
@@ -357,7 +357,7 @@ def not_found(error):
     try:
         # Try and find a custom 404 page
         with open(jp(config['markdown-dir'], '404.md')) as f:
-            content = markdown(f.read())
+            content = markdown(f.read(), smartypants=True)
         return render_template('content.html', title='404', content=content), 404
     except OSError:
         # If we don't find one use this default ugly one
