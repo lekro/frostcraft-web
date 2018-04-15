@@ -268,7 +268,8 @@ def apply(name):
                                             args=(config['discord-webhook'],
                                                 request.url_root + ''
                                                 'vote/{}'.format(appid), token),
-                                                kwargs={'name': primary_value})
+                                                kwargs={'name': primary_value,
+                                                        'position': name})
                     discord_thread.start()
                 else:
                     flash('You have already applied! Ask an operator if you '
