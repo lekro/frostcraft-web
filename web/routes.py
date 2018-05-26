@@ -117,7 +117,7 @@ def privacy():
                     discord=Markup(config['discord-url']),
                     base_url=Markup('https://' + config['hostname']),
                     html=True)
-        return render_template('content.html', title='Home', content=content)
+        return render_template('content.html', title='Privacy Policy', content=content)
     except OSError:
         abort(404)
 
