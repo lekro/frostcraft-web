@@ -108,6 +108,19 @@ def index():
         abort(404)
 
 
+@app.route('/privacy')
+def privacy():
+    try:
+        with open(jp(config['markdown-dir'], 'privacy.md')) as f:
+            content = markdown(f.read(), smartypants=True)
+        content = render_template_string(content,
+                    discord=Markup(config['discord-url']),
+                    base_url=Markup('https://' + config['hostname']),
+                    html=True)
+        return render_template('content.html', title='Home', content=content)
+    except OSError:
+        abort(404)
+
 
 @app.route('/credits')
 def credits():
