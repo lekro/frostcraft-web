@@ -24,7 +24,7 @@ You can exercise the rights below by contacting us as outlined in the “Contact
 - **Right to rectification.** Please contact us if you wish to correct your information in any way within reason.
 - **Right to erasure.** If you wish for us to remove all traces of your existence from the server, we will remove any applications you have sent, and your social media.
 - **Right to restriction of procession.** If you wish to restrict your data from processing, we can remove your social media and application(s) from the server.
-- **Right to data portability.** We can provide you your application(s) in JSON format, which is machine-readable. Note that if we have already removed your application(s), they are irretrievable.
+- **Right to data portability.** We can provide you your application(s) in YAML format, which is machine-readable. Note that if we have already removed your application(s), they are irretrievable.
 - **Right to object.** If you wish to remove your data from processing, we can remove your social media and application(s) from the server.
 - **Right not to be subject to automated decision-making including profiling.** We do not perform any automated decision-making on personal data.
 
