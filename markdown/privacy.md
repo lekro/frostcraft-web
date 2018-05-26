@@ -12,7 +12,7 @@ You must be at least 13 years old to submit an application or play on the FrostC
 
 **Server logs.** We keep recent Minecraft and web server logs to ensure the security of the server. These include IP addresses, targets, and access methods, but not form data sent by POST. Minecraft and web server logs are only viewable by us.
 
-**Applications.** When you submit an application through our website, you agree that are of the age of sixteen or older. If you are older than sixteen but younger than thirteen you need consent of a parent or guardian to apply. The information you provide in your application is shared with current FrostCraft members in order to determine whether you are a good match for the server. Internally, the data in your application contains your IP address, and all the information you sent in your application.
+**Applications.** When you submit an application through our website, you agree that are of the age of sixteen or older. If you are younger than sixteen but at least thirteen you need consent of a parent or guardian to apply. The information you provide in your application is shared with current FrostCraft members in order to determine whether you are a good match for the server. Internally, the data in your application contains your IP address, and all the information you sent in your application.
 
 **Member social media information.** This is only given by accepted members who specifically ask to include their social media information on our website. This information is provided to us by members for the sole purpose of promoting their social media. This includes your online handle, Minecraft head, and any other information you provide.
 
