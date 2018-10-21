@@ -11,6 +11,7 @@ The FrostCraft website flask app.
 
 ## Requirements
 - Python 3.5+ and pip
+  - `apt-get install python3 python3-dev libffi-dev` before running setup.sh
 - nginx or something else to stand in front of this app
 
 ## Usage
